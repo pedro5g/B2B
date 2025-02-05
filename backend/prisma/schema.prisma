@@ -1,0 +1,160 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Providers {
+  GOOGLE
+  GITHUB
+  FACEBOOK
+  EMAIL
+
+  @@map("providers_enum")
+}
+
+enum Status {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+
+  @@map("status_enum")
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@map("priority_enum")
+}
+
+model Account {
+  id           String    @id @default(uuid())
+  provider     Providers
+  providerId   String    @unique @map("provider_id")
+  refreshToken String?   @map("refresh_token")
+  tokenExpiry  DateTime? @map("token_expiry")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  user         User      @relation(fields: [userId], references: [id])
+  userId       String    @map("user_id")
+
+  @@map("accounts")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  name              String
+  email             String?   @unique
+  password          String?
+  profilePictureUrl String?   @map("profile_picture_url")
+  isActive          Boolean   @default(true) @map("is_active")
+  currentWorkspace  String?   @map("current_workspace")
+  lastLogin         DateTime? @map("last_login")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt() @map("updated_at")
+
+  Account       Account[]
+  Workspace     Workspace[]
+  Project       Project[]
+  authorTasks   Task[]      @relation("author_task")
+  Member        Member[]
+  assignedTasks Task[]      @relation("assigned_task")
+
+  @@map("users")
+}
+
+model Workspace {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  ownerId     String   @map("owner_id")
+  inviteCode  String   @unique @map("invite_code")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt() @map("updated_at")
+
+  owner   User      @relation(fields: [ownerId], references: [id])
+  Project Project[]
+  Task    Task[]
+  Member  Member[]
+
+  @@map("workspaces")
+}
+
+model Project {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  emoji       String  @default("📊")
+
+  creatorId   String @map("creator_id")
+  workspaceId String @map("workspace_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt() @map("updated_at")
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  createdBy User      @relation(fields: [creatorId], references: [id])
+  Task      Task[]
+
+  @@map("projects")
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  taskCode    String   @unique @map("task_code")
+  title       String
+  description String?
+  status      Status   @default(TODO)
+  priority    Priority @default(MEDIUM)
+
+  dueDate   DateTime? @map("due_date")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt() @map("updated_at")
+
+  createBy   User      @relation(name: "author_task", fields: [authorId], references: [id])
+  assignedTo User?     @relation(name: "assigned_task", fields: [assignedId], references: [id])
+  project    Project   @relation(fields: [projectId], references: [id])
+  workspace  Workspace @relation(fields: [workspaceId], references: [id])
+
+  workspaceId String  @map("workspace_id")
+  assignedId  String? @map("assigned_id")
+  projectId   String  @map("project_id")
+  authorId    String  @map("creator_id")
+
+  @@map("tasks")
+}
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  permissions String[] @default([])
+  Member      Member[]
+
+  @@map("roles")
+}
+
+model Member {
+  userId      String    @map("user_id")
+  workspaceId String    @map("workspace_id")
+  roleId      String    @map("role_id")
+  role        Role      @relation(fields: [roleId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+
+  joinAt DateTime @default(now()) @map("join_at")
+
+  @@id([userId, workspaceId])
+  @@map("members")
+}

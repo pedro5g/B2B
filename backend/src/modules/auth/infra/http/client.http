@@ -1,0 +1,34 @@
+@baseURL = http://localhost:8000/api/auth
+
+### 
+
+# @name register
+POST {{baseURL}}/register
+Content-Type: application/json
+
+{
+    "name": "pedro luiz",
+    "email": "test3@gmail.com",
+    "password": "123456"
+}
+
+###
+
+# @name login
+POST {{baseURL}}/login
+Content-Type: application/json
+
+{
+    "email": "test3@gmail.com",
+    "password": "123456"
+}
+
+###
+
+# @name logout
+GET {{baseURL}}/logout
+
+###
+
+# @name google_login
+GET {{baseURL}}/google

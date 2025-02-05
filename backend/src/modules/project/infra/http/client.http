@@ -1,0 +1,50 @@
+@baseURL = http://localhost:8000/api/project
+
+# @name create_project
+
+POST {{baseURL}}/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/create
+Content-Type: application/json
+
+{
+    "name": "new project",
+    "description": "description test",
+    "emoji": "🚀"
+}
+
+###
+
+# @name update_project
+
+PUT {{baseURL}}/cm6o0m5n10003zsj8a8okdqz7/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/update
+Content-Type: application/json
+
+{
+    "name": "new project",
+    "description": "description test",
+    "emoji": "🎉"
+}
+
+###
+
+# @name delete_project
+
+DELETE {{baseURL}}/cm6o0hxvp0001zsj8k8ewa5jo/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/delete
+
+
+###
+
+# @name get_projects_by_workspace
+
+GET {{baseURL}}/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/all
+
+###
+
+# @name get_projects_analytics
+
+GET {{baseURL}}/cm6o0m5n10003zsj8a8okdqz7/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/analytics
+
+
+###
+
+# @name get_projects_analytics
+GET {{baseURL}}/cm6o0m5n10003zsj8a8okdqz7/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91

@@ -1,0 +1,38 @@
+@baseURL = http://localhost:8000/api/task
+
+# @name create_task
+
+POST {{baseURL}}/project/cm6o0m5n10003zsj8a8okdqz7/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/create
+Content-Type: application/json
+
+{
+  "title": "test 3",
+  "description": "description test",
+  "priority": "HIGH",
+  "status": "BACKLOG"  
+}
+
+###
+
+# @name update_task
+PUT {{baseURL}}/cm6qyim340001zsxqm6v0vmpg/project/cm6o0m5n10003zsj8a8okdqz7/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/update
+Content-Type: application/json
+
+{
+  "title": "test 3",
+  "description": "description test",
+  "priority": "HIGH",
+  "status": "BACKLOG", 
+  "assignedTo": "7c9eb8d1-22bd-449a-ab39-404aa253d957"  
+}
+
+
+###
+
+# @name get_task_by_id
+GET {{baseURL}}/cm6qmp8et0003zsvkj77wyh9g/project/cm6o0m5n10003zsj8a8okdqz7/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91
+
+###
+
+# @name get_all_tasks
+GET {{baseURL}}/workspace/31172a3b-acbc-4a38-b3ef-b581f078db91/all?priority=LOW&status=TODO

@@ -1,0 +1,55 @@
+@baseURL = http://localhost:8000/api/workspace
+
+
+# @name create_new
+
+POST {{baseURL}}/create/new
+Content-Type: application/json
+
+{
+    "name": "test",
+    "description": "test description"
+}
+
+###
+
+# @name update
+PUT {{baseURL}}/update/0fad37ba-cae2-4384-a473-e49af1660a33
+Content-Type: application/json
+
+{
+    "name": "update name",
+    "description": "new description"
+}
+
+###
+
+# @name change_workspace_user_role
+PUT {{baseURL}}/change/member/:id
+Content-Type: application/json
+{
+    "memberId": "",
+    "roleId": ""
+}
+
+###
+
+# @name delete_workspace
+DELETE {{baseURL}}/delete/0fad37ba-cae2-4384-a473-e49af1660a33
+
+
+### 
+
+# @name all
+GET {{baseURL}}/all
+
+
+###
+
+# @name get_workspace_members
+GET {{baseURL}}/members/31172a3b-acbc-4a38-b3ef-b581f078db91
+
+###
+
+# @name get_workspace_by_id
+GET  {{baseURL}}/31172a3b-acbc-4a38-b3ef-b581f078db91
