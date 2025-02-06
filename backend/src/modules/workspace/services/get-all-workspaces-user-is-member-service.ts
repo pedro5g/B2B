@@ -15,20 +15,12 @@ export class GetAllWorkspacesUserIsMemberService {
       throw new NotFoundException('User not found');
     }
 
-    const memberships = await this.workspaceRepository.findMemberByUserId(
-      userId,
-    );
-
-    const workspaceInfos = memberships.map(
-      (workspace) => workspace.workspaceId,
-    );
-    const { password, ...withoutPassword } = user;
+    const workspaces = (
+      await this.workspaceRepository.findWorkspacesByUserId(userId)
+    ).map(({ createdAt, updatedAt, ...rest }) => ({ ...rest }));
 
     return {
-      workspaces: {
-        ...withoutPassword,
-        workspaces: workspaceInfos,
-      },
+      workspaces,
     };
   }
 }
