@@ -1,4 +1,4 @@
-export interface ShortUserInfo {
+export interface IAggregateUser {
   id: string;
   name: string;
   profilePictureUrl: string | null;

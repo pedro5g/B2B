@@ -1,5 +1,3 @@
-import { IUserWithoutPassword } from './i-user';
-
 export interface IUserWithRole {
   user: {
     id: string;

@@ -1,5 +1,5 @@
 import { IAuthStrategy } from '@/modules/auth/domain/repository/i-auth-strategy';
-import { IUserWithoutPassword } from '@/modules/user/domain/models/i-user';
+import { IUserPresenter } from '@/modules/user/domain/models/i-user-presenter';
 import { BadRequestException } from '@/shared/exceptions';
 import passport from 'passport';
 
@@ -9,7 +9,7 @@ import passport from 'passport';
 
 export class LocalStrategyAdapter implements IAuthStrategy {
   async authenticate(req: Express.Request): Promise<{
-    user?: IUserWithoutPassword;
+    user?: IUserPresenter;
   }> {
     return new Promise((resolve, reject) => {
       passport.authenticate(

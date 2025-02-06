@@ -1,12 +1,12 @@
 import { BadRequestException } from '@/shared/exceptions';
 import { hashPassword } from '@/shared/utils/bcrypt';
 import { IAuthRepository } from '../domain/repository/i-auth-repository';
-import { RegisterUserDTO } from '../domain/dtos/register-user-dto';
+import { RegisterUserServiceDTO } from './dtos/register-user-service-dto';
 
 export class RegisterUserService {
   constructor(private readonly authRepository: IAuthRepository) {}
 
-  async execute({ name, email, password }: RegisterUserDTO) {
+  async execute({ name, email, password }: RegisterUserServiceDTO) {
     const userExists = await this.authRepository.getUserByEmail(email);
 
     if (userExists) {

@@ -8,7 +8,7 @@ import {
   verifyUserService,
 } from '@/modules/auth/infra/factory';
 import { ProviderEnum } from '../enums/account-provider';
-import { IUserWithoutPassword } from '@/modules/user/domain/models/i-user';
+import { IUserWithWorkspace } from '@/modules/user/domain/models/i-user-with-workspace';
 
 passport.use(
   new GoogleStrategy(
@@ -60,8 +60,6 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user: IUserWithoutPassword, done) =>
-  done(null, user),
-);
+passport.deserializeUser((user: IUserWithWorkspace, done) => done(null, user));
 
 export { passport };

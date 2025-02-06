@@ -1,7 +1,8 @@
-import { IUserWithoutPassword } from '@/modules/user/domain/models/i-user';
+import { IUserPresenter } from '@/modules/user/domain/models/i-user-presenter';
+import { IUserWithWorkspace } from '@/modules/user/domain/models/i-user-with-workspace';
 
 declare global {
   namespace Express {
-    interface User extends IUserWithoutPassword {}
+    interface User extends IUserWithWorkspace {}
   }
 }

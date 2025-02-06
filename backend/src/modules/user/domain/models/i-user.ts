@@ -10,5 +10,3 @@ export interface IUser {
   createdAt: Date | string;
   updatedAt: Date | string;
 }
-
-export interface IUserWithoutPassword extends Omit<IUser, 'password'> {}

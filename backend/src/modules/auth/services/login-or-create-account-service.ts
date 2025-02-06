@@ -1,8 +1,19 @@
-import { RegisterAccountDTO } from '../domain/dtos/register-account-dto';
+import { IWorkspaceRepository } from '@/modules/workspace/domain/repository/i-workspace-repository';
 import { IAuthRepository } from '../domain/repository/i-auth-repository';
+import {
+  InternalServerException,
+  NotFoundException,
+} from '@/shared/exceptions';
+import {
+  LoginOrCreateAccountServiceDTO,
+  LoginOrCreateAccountServiceReturnDTO,
+} from './dtos/login-or-create-account-service-dto';
 
 export class LoginOrCreateAccountService {
-  constructor(private readonly authRepository: IAuthRepository) {}
+  constructor(
+    private readonly authRepository: IAuthRepository,
+    private readonly workspaceRepository: IWorkspaceRepository,
+  ) {}
 
   async execute({
     displayName,
@@ -10,7 +21,7 @@ export class LoginOrCreateAccountService {
     providerId,
     email,
     picture,
-  }: RegisterAccountDTO) {
+  }: LoginOrCreateAccountServiceDTO): Promise<LoginOrCreateAccountServiceReturnDTO> {
     let user = email ? await this.authRepository.getUserByEmail(email) : null;
 
     if (!user) {
@@ -23,8 +34,32 @@ export class LoginOrCreateAccountService {
       });
     }
 
-    const { password, ...withoutPassword } = user;
+    if (!user.currentWorkspace) {
+      throw new InternalServerException(
+        `Current workspace is null on user: ${user.id}`,
+      );
+    }
 
-    return { user: withoutPassword };
+    const workspace = await this.workspaceRepository.findById(
+      user.currentWorkspace,
+    );
+
+    if (!workspace) {
+      throw new NotFoundException('Workspace not found');
+    }
+
+    const { password, currentWorkspace, ...rest } = user;
+
+    return {
+      user: {
+        ...rest,
+        currentWorkspace: {
+          id: workspace.id,
+          name: workspace.name,
+          inviteCode: workspace.inviteCode,
+          ownerId: workspace.ownerId,
+        },
+      },
+    };
   }
 }
