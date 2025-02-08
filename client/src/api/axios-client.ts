@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AxiosAdapter, HttpClient } from "./http-adapter";
+import { CustomError } from "@/@types/custom-error";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,16 +18,22 @@ api.interceptors.response.use(
   },
   async (error) => {
     const { data, status } = error.response;
+
     if (data === "Unauthorized" && status === 401) {
       window.location.href = "/";
+      return;
     }
-    return Promise.reject({
-      ...data,
-    });
+
+    const customError: CustomError = {
+      ...error,
+      errorCode: data?.errorCode || "UNKNOWN_ERROR",
+    };
+
+    return Promise.reject(customError);
   }
 );
 
-const requester = AxiosAdapter.create(api);
+const requester = AxiosAdapter(api);
 const API = new HttpClient(requester);
 
 export { API };

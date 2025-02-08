@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,16 +21,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/logo";
 import { GoogleOauthButton } from "@/components/auth/google-oauth-button";
+import { useMutation } from "@tanstack/react-query";
+import { registerMutationFn } from "@/api/api";
+import { Loader } from "lucide-react";
 
 //  TODO: create a separate types file and move validation schemas to it
 const signUpFormSchema = z.object({
   name: z.string().trim().min(1, {
     message: "Name is required",
   }),
-  email: z.string().trim().email("Invalid email address").min(1, {
-    message: "Workspace name is required",
-  }),
-  password: z.string().trim().min(1, {
+  email: z.string().trim().email("Invalid email address"),
+  password: z.string().trim().min(6, {
     message: "Password is required",
   }),
 });
@@ -38,6 +39,7 @@ const signUpFormSchema = z.object({
 type SignUpFormSchema = z.infer<typeof signUpFormSchema>;
 
 export const SignUp = () => {
+  const navigate = useNavigate();
   const form = useForm<SignUpFormSchema>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
@@ -47,12 +49,33 @@ export const SignUp = () => {
     },
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: registerMutationFn,
+    onSuccess: () => {
+      window.toast({
+        title: "Registered successfully",
+        variant: "success",
+      });
+      navigate("/");
+    },
+    onError: (error) => {
+      console.error(error);
+      window.toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const onSubmit = (values: SignUpFormSchema) => {
-    console.log(values);
+    mutate(values);
   };
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+    <div
+      className="flex min-h-svh flex-col items-center justify-center gap-6 
+    bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
           to="/"
@@ -75,8 +98,13 @@ export const SignUp = () => {
                     <div className="flex flex-col gap-4">
                       <GoogleOauthButton label="Signup" />
                     </div>
-                    <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                      <span className="relative z-10 bg-background px-2 text-muted-foreground">
+                    <div
+                      className="relative text-center text-sm after:absolute 
+                    after:inset-0 after:top-1/2 after:z-0 after:flex 
+                    after:items-center after:border-t after:border-border">
+                      <span
+                        className="relative z-10 bg-background px-2 
+                      text-muted-foreground">
                         Or continue with
                       </span>
                     </div>
@@ -87,7 +115,9 @@ export const SignUp = () => {
                           name="name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                              <FormLabel
+                                className="dark:text-[#f1f7feb5] 
+                              text-sm">
                                 Name
                               </FormLabel>
                               <FormControl>
@@ -109,7 +139,9 @@ export const SignUp = () => {
                           name="email"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                              <FormLabel
+                                className="dark:text-[#f1f7feb5] 
+                              text-sm">
                                 Email
                               </FormLabel>
                               <FormControl>
@@ -131,7 +163,9 @@ export const SignUp = () => {
                           name="password"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                              <FormLabel
+                                className="dark:text-[#f1f7feb5] 
+                              text-sm">
                                 Password
                               </FormLabel>
                               <FormControl>
@@ -147,8 +181,12 @@ export const SignUp = () => {
                           )}
                         />
                       </div>
-                      <Button type="submit" className="w-full">
+                      <Button
+                        disabled={isPending}
+                        type="submit"
+                        className="w-full">
                         Sign up
+                        {isPending && <Loader className="animate-spin" />}
                       </Button>
                     </div>
                     <div className="text-center text-sm">
@@ -162,7 +200,9 @@ export const SignUp = () => {
               </Form>
             </CardContent>
           </Card>
-          <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+          <div
+            className="text-balance text-center text-xs text-muted-foreground 
+          [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
             By clicking continue, you agree to our{" "}
             <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
           </div>

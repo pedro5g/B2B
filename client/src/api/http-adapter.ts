@@ -6,12 +6,11 @@ import {
   RequesterFn,
 } from "./types/api-type";
 
-export class AxiosAdapter {
-  private constructor(
-    private instance: AxiosInstance,
-    private opts?: AxiosRequestConfig
-  ) {}
-  private async request<T>(
+export function AxiosAdapter(
+  instance: AxiosInstance,
+  opts?: AxiosRequestConfig
+): RequesterFn {
+  return async function requester<T>(
     url: string,
     method: MethodType,
     body?: unknown,
@@ -22,15 +21,11 @@ export class AxiosAdapter {
       method,
       data: body,
       headers,
-      ...this.opts,
+      ...opts,
     };
-    const response: AxiosResponse<T> = await this.instance.request(config);
+    const response: AxiosResponse<T> = await instance.request(config);
     return response?.data;
-  }
-
-  static create(instance: AxiosInstance, opts?: AxiosRequestConfig) {
-    return new AxiosAdapter(instance, opts).request;
-  }
+  };
 }
 
 export class HttpClient implements IHttpClient {

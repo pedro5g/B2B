@@ -1,4 +1,11 @@
-import { ArrowRight, Folder, MoreHorizontal, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowRight,
+  Folder,
+  Loader,
+  MoreHorizontal,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -21,57 +28,93 @@ import { useCreateProjectDialog } from "@/hooks/use-create-project-dialog";
 import { ConfirmDialog } from "../resuable/confirm-dialog";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { Button } from "../ui/button";
+import { usePagination } from "@/hooks/use-pagination";
+import { useGetProjectsInWorkspaceQuery } from "@/hooks/api/use-get-projects";
+import { PaginationType, ProjectType } from "@/api/types/api-type";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteProjectMutationFn } from "@/api/api";
+import { PermissionsGuard } from "../resuable/permission-guard";
+import { Permissions } from "@/constant";
 
 export function NavProjects() {
   const navigate = useNavigate();
   const location = useLocation();
+
   const pathname = location.pathname;
+  const workspaceId = useWorkspaceId();
+  const queryClient = useQueryClient();
 
   const { onOpen } = useCreateProjectDialog();
-  const { context, open, onOpenDialog, onCloseDialog } = useConfirmDialog();
+  const { context, open, onOpenDialog, onCloseDialog } =
+    useConfirmDialog<ProjectType>();
 
-  const workspaceId = useWorkspaceId();
-
+  const [{ pageNumber, pageSize }, setPagination] = usePagination({
+    initialPagaSize: 5,
+  });
   const { isMobile } = useSidebar();
 
-  const projects = [
-    {
-      id: "pro-383dh",
-      name: "Design Engineering",
-      emoji: "📊",
-      url: `/workspace/${workspaceId}/project/:pro-383dh`,
-    },
-    {
-      id: "p383dh",
-      name: "Sales & Marketing",
-      emoji: "📈",
-      url: `/workspace/${workspaceId}/project/:p383dh`,
-    },
-    {
-      id: "pro-wwhe",
-      name: "Travel",
-      emoji: "✈️",
-      url: `/workspace/${workspaceId}/project/:pro-wwhe`,
-    },
-  ];
+  const { data, isPending, isFetching, isError } =
+    useGetProjectsInWorkspaceQuery({ workspaceId, pageSize, pageNumber });
 
-  const hasMore = true;
+  const projects = data?.projects || [];
+  const pagination = data?.pagination || ({ totalPage: 1 } as PaginationType);
+  const hasMore = pagination.totalPage > pageNumber;
 
-  const handleConfirm = () => {};
+  const fetchNextPage = () => {
+    if (!hasMore || isFetching) return;
+    // each click show more 5 projects in nav projects while totalPage > pageNumber
+    setPagination("pageSize", pageSize + 5);
+  };
+
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: deleteProjectMutationFn,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: ["all-projects", workspaceId],
+      });
+      window.toast({
+        title: "Success",
+        description: data.message,
+        variant: "success",
+      });
+      navigate(`/workspace/${workspaceId}`);
+      setTimeout(() => onCloseDialog(), 100);
+    },
+    onError: (error) => {
+      console.log(error);
+      window.toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleConfirm = () => {
+    if (!context) return;
+    mutate({ workspaceId, projectId: context.id });
+  };
   return (
     <>
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
         <SidebarGroupLabel className="w-full justify-between pr-0">
           <span>Projects</span>
-          <button
-            onClick={onOpen}
-            type="button"
-            className="flex size-5 items-center justify-center rounded-full border">
-            <Plus className="size-3.5" />
-          </button>
+          <PermissionsGuard requiredPermission={Permissions.CREATE_PROJECT}>
+            <button
+              onClick={onOpen}
+              type="button"
+              className="flex size-5 items-center justify-center rounded-full 
+            border">
+              <Plus className="size-3.5" />
+            </button>
+          </PermissionsGuard>
         </SidebarGroupLabel>
         <SidebarMenu className="h-[320px] scrollbar overflow-y-auto pb-2">
-          {projects?.length === 0 ? (
+          {isError && <div>Error occurred</div>}
+          {isPending && (
+            <Loader className="size-5 animate-spin place-content-center" />
+          )}
+          {!isPending && projects.length === 0 ? (
             <div className="pl-3">
               <p className="text-xs text-muted-foreground">
                 There is no projects in this Workspace yet. Projects you create
@@ -88,7 +131,7 @@ export function NavProjects() {
             </div>
           ) : (
             projects.map((item) => {
-              const projectUrl = item.url;
+              const projectUrl = `/workspace/${workspaceId}/project/${item.id}`;
 
               return (
                 <SidebarMenuItem key={item.id}>
@@ -116,7 +159,7 @@ export function NavProjects() {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
-                        disabled={false}
+                        disabled={isLoading}
                         onClick={() => onOpenDialog(item)}>
                         <Trash2 className="text-muted-foreground" />
                         <span>Delete Project</span>
@@ -130,9 +173,12 @@ export function NavProjects() {
 
           {hasMore && (
             <SidebarMenuItem>
-              <SidebarMenuButton className="text-sidebar-foreground/70">
+              <SidebarMenuButton
+                className="text-sidebar-foreground/70"
+                disabled={isFetching}
+                onClick={fetchNextPage}>
                 <MoreHorizontal className="text-sidebar-foreground/70" />
-                <span>More</span>
+                <span>{isFetching ? "Loading..." : "More"}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )}
@@ -141,7 +187,7 @@ export function NavProjects() {
 
       <ConfirmDialog
         isOpen={open}
-        isLoading={false}
+        isLoading={isLoading}
         onClose={onCloseDialog}
         onConfirm={handleConfirm}
         title="Delete Project"

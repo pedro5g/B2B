@@ -7,8 +7,8 @@ export const CreateProjectDialog = () => {
   return (
     <div>
       <Dialog modal={true} open={open} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg border-0">
-          <CreateProjectForm />
+        <DialogContent className="sm:max-w-lg border-0 rounded-md">
+          <CreateProjectForm onClose={onClose} />
         </DialogContent>
       </Dialog>
     </div>

@@ -22,13 +22,13 @@ export const EmojiPickerComponent = ({
         custom={customEmojis}
         categories={[
           "activity",
-          // 'flags',
-          // 'foods',
-          // 'frequent',
+          "flags",
+          "foods",
+          "frequent",
           "objects",
           "people",
           "places",
-          // 'symbols',
+          "symbols",
         ]}
         categoryIcons={{
           project_management: {
@@ -47,7 +47,7 @@ export const EmojiPickerComponent = ({
         maxFrequentRows={0}
         //emojiButtonSize={30}
         emojiButtonColors={["rgba(102, 51, 153, .2)"]}
-        className=" h-[40px]"
+        className="h-[40px]"
       />
     </div>
   );

@@ -54,10 +54,7 @@ export interface IHttpClient {
 export type LoginType = { email: string; password: string };
 export type LoginResponseType = {
   message: string;
-  user: {
-    id: string;
-    currentWorkspace: string;
-  };
+  user: UserType;
 };
 
 export type RegisterType = {
@@ -70,7 +67,7 @@ export type UserType = {
   id: string;
   name: string;
   email: string;
-  profilePicture: string | null;
+  profilePictureUrl: string | null;
   isActive: true;
   lastLogin: null;
   createdAt: Date;
@@ -181,7 +178,7 @@ export type PaginationType = {
   totalCount: number;
   pageSize: number;
   pageNumber: number;
-  totalPages: number;
+  totalPage: number;
   skip: number;
   limit: number;
 };
@@ -211,7 +208,7 @@ export type CreateProjectPayloadType = {
   data: {
     emoji: string;
     name: string;
-    description: string;
+    description?: string;
   };
 };
 
@@ -226,7 +223,7 @@ export type EditProjectPayloadType = {
   data: {
     emoji: string;
     name: string;
-    description: string;
+    description?: string;
   };
 };
 
@@ -288,7 +285,7 @@ export type TaskType = {
 export type AllTaskPayloadType = {
   workspaceId: string;
   projectId?: string | null;
-  keywords?: string[];
+  keyword?: string[];
   priority?: TaskPriorityEnumType[];
   status?: TaskStatusEnumType[];
   assignedTo?: string[];

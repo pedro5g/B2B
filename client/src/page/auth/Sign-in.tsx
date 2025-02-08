@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,6 +21,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Logo } from "@/components/logo";
 import { GoogleOauthButton } from "@/components/auth/google-oauth-button";
+import { useMutation } from "@tanstack/react-query";
+import { loginMutationFn } from "@/api/api";
+import { Loader } from "lucide-react";
 
 const signInformSchema = z.object({
   email: z.string().trim().email("Invalid email address").min(1, {
@@ -34,6 +37,10 @@ const signInformSchema = z.object({
 type SignInFormSchema = z.infer<typeof signInformSchema>;
 
 export const SignIn = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl");
+
   const form = useForm<SignInFormSchema>({
     resolver: zodResolver(signInformSchema),
     defaultValues: {
@@ -42,12 +49,35 @@ export const SignIn = () => {
     },
   });
 
-  const onSubmit = (values: SignInFormSchema) => {
-    console.log(values);
+  const { mutate, isPending } = useMutation({
+    mutationFn: loginMutationFn,
+    onSuccess: (data) => {
+      const { user } = data;
+
+      // whether user sign in with invite code
+      const decodeUrl = returnUrl ? decodeURIComponent(returnUrl) : null;
+
+      navigate(decodeUrl || `workspace/${user.currentWorkspace.id}`);
+    },
+    onError: (err) => {
+      console.error(err);
+      window.toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = async (values: SignInFormSchema) => {
+    if (isPending) return;
+    mutate(values);
   };
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+    <div
+      className="flex min-h-svh flex-col items-center justify-center 
+    gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
         <Link
           to="/"
@@ -70,8 +100,13 @@ export const SignIn = () => {
                     <div className="flex flex-col gap-4">
                       <GoogleOauthButton label="Login" />
                     </div>
-                    <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                      <span className="relative z-10 bg-background px-2 text-muted-foreground">
+                    <div
+                      className="relative text-center text-sm after:absolute 
+                    after:inset-0 after:top-1/2 after:z-0 after:flex 
+                    after:items-center after:border-t after:border-border">
+                      <span
+                        className="relative z-10 bg-background px-2 
+                      text-muted-foreground">
                         Or continue with
                       </span>
                     </div>
@@ -82,7 +117,9 @@ export const SignIn = () => {
                           name="email"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                              <FormLabel
+                                className="dark:text-[#f1f7feb5] 
+                              text-sm">
                                 Email
                               </FormLabel>
                               <FormControl>
@@ -105,12 +142,15 @@ export const SignIn = () => {
                           render={({ field }) => (
                             <FormItem>
                               <div className="flex items-center">
-                                <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                                <FormLabel
+                                  className="dark:text-[#f1f7feb5] 
+                                text-sm">
                                   Password
                                 </FormLabel>
                                 <a
                                   href="#"
-                                  className="ml-auto text-sm underline-offset-4 hover:underline">
+                                  className="ml-auto text-sm underline-offset-4 
+                                  hover:underline">
                                   Forgot your password?
                                 </a>
                               </div>
@@ -127,8 +167,12 @@ export const SignIn = () => {
                           )}
                         />
                       </div>
-                      <Button type="submit" className="w-full">
+                      <Button
+                        disabled={isPending}
+                        type="submit"
+                        className="w-full">
                         Login
+                        {isPending && <Loader className="animate-spin" />}
                       </Button>
                     </div>
                     <div className="text-center text-sm">
@@ -144,7 +188,9 @@ export const SignIn = () => {
               </Form>
             </CardContent>
           </Card>
-          <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+          <div
+            className="text-balance text-center text-xs text-muted-foreground 
+          [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
             By clicking continue, you agree to our{" "}
             <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
           </div>

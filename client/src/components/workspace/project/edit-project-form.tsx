@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,39 +17,70 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "../../ui/textarea";
-import EmojiPickerComponent from "@/components/emoji-picker";
+import { EmojiPickerComponent } from "@/components/emoji-picker";
 import { ProjectType } from "@/api/types/api-type";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { editProjectMutationFn } from "@/api/api";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
+import { Loader } from "lucide-react";
 
-export function EditProjectForm(props: {
-  project?: ProjectType;
+const editProjectFormSchema = z.object({
+  name: z.string().trim().min(1, {
+    message: "Project title is required",
+  }),
+  description: z.string().trim().optional(),
+  emoji: z.string().trim().emoji(),
+});
+
+type EditProjectFormSchema = z.infer<typeof editProjectFormSchema>;
+
+interface EditProjectFormProps {
+  project: ProjectType;
   onClose: () => void;
-}) {
-  const { onClose } = props;
+}
 
-  const [emoji, setEmoji] = useState("📊");
-
-  const formSchema = z.object({
-    name: z.string().trim().min(1, {
-      message: "Project title is required",
-    }),
-    description: z.string().trim(),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+export const EditProjectForm = ({ project, onClose }: EditProjectFormProps) => {
+  const workspaceId = useWorkspaceId();
+  const queryClient = useQueryClient();
+  const form = useForm<EditProjectFormSchema>({
+    resolver: zodResolver(editProjectFormSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: project.name,
+      description: project.description,
+      emoji: project.emoji || "",
     },
   });
 
-  const handleEmojiSelection = (emoji: string) => {
-    setEmoji(emoji);
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: editProjectMutationFn,
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["project", project.id, workspaceId],
+      });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    onClose();
+      queryClient.invalidateQueries({
+        queryKey: ["all-projects", workspaceId],
+      });
+      window.toast({
+        title: "Success",
+        description: message,
+        variant: "success",
+      });
+      onClose();
+    },
+    onError: (error) => {
+      console.error(error);
+      window.toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (values: EditProjectFormSchema) => {
+    if (isPending) return;
+    mutate({ projectId: project.id, workspaceId, data: values });
   };
 
   return (
@@ -72,18 +102,25 @@ export function EditProjectForm(props: {
               <label className="block text-sm font-medium text-gray-700">
                 Select Emoji
               </label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="font-normal size-[60px] !p-2 !shadow-none mt-2 items-center rounded-full ">
-                    <span className="text-4xl">{emoji}</span>
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent align="start" className=" !p-0">
-                  <EmojiPickerComponent onSelectEmoji={handleEmojiSelection} />
-                </PopoverContent>
-              </Popover>
+              <FormField
+                control={form.control}
+                name="emoji"
+                render={({ field }) => (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className="font-normal size-[60px] !p-2 !shadow-none mt-2 
+                    items-center rounded-full">
+                        <span className="text-4xl">{field.value}</span>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent align="start" className="!p-0">
+                      <EmojiPickerComponent onSelectEmoji={field.onChange} />
+                    </PopoverContent>
+                  </Popover>
+                )}
+              />
             </div>
             <div className="mb-4">
               <FormField
@@ -128,13 +165,15 @@ export function EditProjectForm(props: {
             </div>
 
             <Button
+              disabled={isPending}
               className="flex place-self-end  h-[40px] text-white font-semibold"
               type="submit">
-              Create
+              {isPending && <Loader className="animate-spin" />}
+              {isPending ? "Editing" : "Edit"}
             </Button>
           </form>
         </Form>
       </div>
     </div>
   );
-}
+};

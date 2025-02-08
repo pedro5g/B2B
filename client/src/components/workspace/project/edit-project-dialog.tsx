@@ -1,25 +1,20 @@
-import { Edit3 } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { EditProjectForm } from "./edit-project-form";
 import { ProjectType } from "@/api/types/api-type";
-import { useState } from "react";
+import { useEditProjectDialog } from "@/hooks/use-edit-project-dialog";
 
-export const EditProjectDialog = (props: { project?: ProjectType }) => {
-  const [isOpen, setIsOpen] = useState(false);
+interface EditProjectDialogProps {
+  project: ProjectType;
+}
 
-  const onClose = () => {
-    setIsOpen(false);
-  };
+export const EditProjectDialog = ({ project }: EditProjectDialogProps) => {
+  const { open, onClose } = useEditProjectDialog();
+
   return (
     <div>
-      <Dialog modal={true} open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger className="mt-1.5" asChild>
-          <button>
-            <Edit3 className="w-5 h-5" />
-          </button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-lg border-0">
-          <EditProjectForm project={props.project} onClose={onClose} />
+      <Dialog modal={true} open={open} onOpenChange={onClose}>
+        <DialogContent className="sm:max-w-lg border-0 rounded-md">
+          <EditProjectForm project={project} onClose={onClose} />
         </DialogContent>
       </Dialog>
     </div>

@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "../ui/textarea";
 
-export function CreateWorkspaceForm() {
+export const CreateWorkspaceForm = () => {
   const formSchema = z.object({
     name: z.string().trim().min(1, {
       message: "Workspace name is required",
@@ -118,4 +118,4 @@ export function CreateWorkspaceForm() {
       />
     </main>
   );
-}
+};
