@@ -95,14 +95,14 @@ export type WorkspaceType = {
 
 export type CreateWorkspaceType = {
   name: string;
-  description: string;
+  description?: string;
 };
 
 export type EditWorkspaceType = {
   workspaceId: string;
   data: {
     name: string;
-    description: string;
+    description?: string;
   };
 };
 
@@ -127,7 +127,6 @@ export type WorkspaceWithMembersType = WorkspaceType & {
       permissions: PermissionType[];
     };
     joinedAt: string;
-    createdAt: string;
   }[];
 };
 

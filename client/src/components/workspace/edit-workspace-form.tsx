@@ -12,25 +12,62 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "../ui/textarea";
+import { WorkspaceType } from "@/api/types/api-type";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { editWorkspaceMutationFn } from "@/api/api";
+import { Loader } from "lucide-react";
+import { PermissionsGuard } from "../reusable/permission-guard";
+import { Permissions } from "@/constant";
+const editWorkspaceFormSchema = z.object({
+  name: z.string().trim().min(1, {
+    message: "Workspace name is required",
+  }),
+  description: z.string().trim().optional(),
+});
 
-export function EditWorkspaceForm() {
-  const formSchema = z.object({
-    name: z.string().trim().min(1, {
-      message: "Workspace name is required",
-    }),
-    description: z.string().trim(),
-  });
+type EditWorkspaceFormType = z.infer<typeof editWorkspaceFormSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+interface EditWorkspaceFormProps {
+  workspace: WorkspaceType;
+}
+
+export function EditWorkspaceForm({ workspace }: EditWorkspaceFormProps) {
+  const queryClient = useQueryClient();
+  const form = useForm<EditWorkspaceFormType>({
+    resolver: zodResolver(editWorkspaceFormSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: workspace.name,
+      description: workspace.description,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const { mutate, isPending } = useMutation({
+    mutationFn: editWorkspaceMutationFn,
+    onSuccess: ({ message, workspace }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", workspace.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-workspaces"],
+      });
+      window.toast({
+        title: "Success",
+        description: message,
+        variant: "success",
+      });
+    },
+    onError: (error) => {
+      window.toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (values: EditWorkspaceFormType) => {
+    if (isPending) return;
+    mutate({ workspaceId: workspace.id, data: values });
   };
 
   return (
@@ -55,12 +92,23 @@ export function EditWorkspaceForm() {
                       Workspace name
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Taco's Co."
-                        className="!h-[48px] disabled:opacity-90 disabled:pointer-events-none"
-                        disabled={false}
-                        {...field}
-                      />
+                      <PermissionsGuard
+                        callback={
+                          <Input
+                            readOnly={true}
+                            placeholder="Taco's Co."
+                            className="!h-[48px] disabled:opacity-90 disabled:pointer-events-none"
+                            value={field.value}
+                          />
+                        }
+                        requiredPermission={Permissions.EDIT_WORKSPACE}>
+                        <Input
+                          placeholder="Taco's Co."
+                          className="!h-[48px] disabled:opacity-90 disabled:pointer-events-none"
+                          disabled={isPending}
+                          {...field}
+                        />
+                      </PermissionsGuard>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -80,27 +128,47 @@ export function EditWorkspaceForm() {
                       </span>
                     </FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={6}
-                        disabled={false}
-                        className="disabled:opacity-90 disabled:pointer-events-none"
-                        placeholder="Our team organizes marketing projects and tasks here."
-                        {...field}
-                      />
+                      <PermissionsGuard
+                        callback={
+                          <Textarea
+                            rows={6}
+                            readOnly
+                            className="disabled:opacity-90 disabled:pointer-events-none"
+                            placeholder="Our team organizes marketing projects and tasks here."
+                            value={field.value}
+                          />
+                        }
+                        requiredPermission={Permissions.EDIT_WORKSPACE}>
+                        <Textarea
+                          rows={6}
+                          disabled={isPending}
+                          className="disabled:opacity-90 disabled:pointer-events-none"
+                          placeholder="Our team organizes marketing projects and tasks here."
+                          {...field}
+                        />
+                      </PermissionsGuard>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            {/* {canEditWorkspace && ( */}
-            <Button
-              className="flex place-self-end  h-[40px] text-white font-semibold"
-              disabled={false}
-              type="submit">
-              {/* {false && <Loader className="animate-spin" />} */}
-              Update Workspace
-            </Button>
+
+            <PermissionsGuard
+              callback={
+                <div className="text-end text-sm pt-3 italic w-full text-muted-foreground">
+                  You do not have the permission to edit this
+                </div>
+              }
+              requiredPermission={Permissions.EDIT_WORKSPACE}>
+              <Button
+                className="flex place-self-end  h-[40px] text-white font-semibold"
+                disabled={isPending}
+                type="submit">
+                {isPending && <Loader className="animate-spin" />}
+                {!isPending ? "Edit Workspace" : "Editing"}
+              </Button>
+            </PermissionsGuard>
           </form>
         </Form>
       </div>

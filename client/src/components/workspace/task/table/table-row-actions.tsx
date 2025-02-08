@@ -11,7 +11,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ConfirmDialog } from "@/components/resuable/confirm-dialog";
+import { ConfirmDialog } from "@/components/reusable/confirm-dialog";
 import { TaskType } from "@/api/types/api-type";
 
 interface DataTableRowActionsProps {

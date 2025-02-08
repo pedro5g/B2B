@@ -1,4 +1,3 @@
-import React from "react";
 import { PermissionType } from "@/constant";
 import { useAuthContext } from "@/context/auth-provider";
 
@@ -11,6 +10,7 @@ type PermissionsGuardProps = {
 export const PermissionsGuard = ({
   requiredPermission,
   callback,
+
   children,
 }: PermissionsGuardProps) => {
   const { hasPermission } = useAuthContext();

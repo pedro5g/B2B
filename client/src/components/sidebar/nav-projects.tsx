@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useCreateProjectDialog } from "@/hooks/use-create-project-dialog";
-import { ConfirmDialog } from "../resuable/confirm-dialog";
+import { ConfirmDialog } from "../reusable/confirm-dialog";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { Button } from "../ui/button";
 import { usePagination } from "@/hooks/use-pagination";
@@ -33,7 +33,7 @@ import { useGetProjectsInWorkspaceQuery } from "@/hooks/api/use-get-projects";
 import { PaginationType, ProjectType } from "@/api/types/api-type";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteProjectMutationFn } from "@/api/api";
-import { PermissionsGuard } from "../resuable/permission-guard";
+import { PermissionsGuard } from "../reusable/permission-guard";
 import { Permissions } from "@/constant";
 
 export function NavProjects() {

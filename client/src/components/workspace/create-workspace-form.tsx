@@ -13,25 +13,60 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "../ui/textarea";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createWorkspaceMutationFn } from "@/api/api";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "lucide-react";
 
-export const CreateWorkspaceForm = () => {
-  const formSchema = z.object({
-    name: z.string().trim().min(1, {
-      message: "Workspace name is required",
-    }),
-    description: z.string().trim(),
-  });
+const createWorkspaceFormSchema = z.object({
+  name: z.string().trim().min(1, {
+    message: "Workspace name is required",
+  }),
+  description: z.string().trim().optional(),
+});
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+type CreateWorkspaceFormType = z.infer<typeof createWorkspaceFormSchema>;
+
+interface CreateWorkspaceFormProps {
+  onClose: () => void;
+}
+
+export const CreateWorkspaceForm = ({ onClose }: CreateWorkspaceFormProps) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const form = useForm<CreateWorkspaceFormType>({
+    resolver: zodResolver(createWorkspaceFormSchema),
     defaultValues: {
       name: "",
       description: "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const { mutate, isPending } = useMutation({
+    mutationFn: createWorkspaceMutationFn,
+    onSuccess: ({ message, workspace }) => {
+      window.toast({
+        title: "Success",
+        description: message,
+        variant: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["user-workspaces"] });
+      navigate(`/workspace/${workspace.id}`);
+      onClose();
+    },
+    onError: (error) => {
+      console.error(error);
+      window.toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const onSubmit = (values: CreateWorkspaceFormType) => {
+    if (isPending) return;
+    mutate(values);
   };
 
   return (
@@ -104,9 +139,11 @@ export const CreateWorkspaceForm = () => {
             </div>
 
             <Button
+              disabled={isPending}
               className="w-full h-[40px] text-white font-semibold"
               type="submit">
-              Create Workspace
+              {isPending && <Loader className="animate-spin" />}
+              {isPending ? "Creating" : "Create Workspace"}
             </Button>
           </form>
         </Form>

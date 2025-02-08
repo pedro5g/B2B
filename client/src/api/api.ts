@@ -54,7 +54,10 @@ export const editWorkspaceMutationFn = async ({
   workspaceId,
   data,
 }: EditWorkspaceType) => {
-  return await API.PUT(`/workspace/update/${workspaceId}`, data);
+  return await API.PUT<CreateWorkspaceResponseType>(
+    `/workspace/update/${workspaceId}`,
+    data
+  );
 };
 
 export const getWorkspaceByIdQueryFn = async (workspaceId: string) => {
@@ -83,7 +86,9 @@ export const changeWorkspaceMemberRoleMutationFn = async ({
 };
 
 export const deleteWorkspaceMutationFn = async (workspaceId: string) => {
-  return await API.DELETE(`/workspace/delete/${workspaceId}`);
+  return await API.DELETE<{ message: string }>(
+    `/workspace/delete/${workspaceId}`
+  );
 };
 
 //***************************** MEMBER ***************************************//

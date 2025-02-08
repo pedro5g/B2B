@@ -1,13 +1,56 @@
-import { ConfirmDialog } from "@/components/resuable/confirm-dialog";
+import { deleteWorkspaceMutationFn } from "@/api/api";
+import { ConfirmDialog } from "@/components/reusable/confirm-dialog";
+import { PermissionsGuard } from "@/components/reusable/permission-guard";
 import { Button } from "@/components/ui/button";
+import { Permissions } from "@/constant";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const DeleteWorkspaceCard = () => {
+interface DeleteWorkspaceCardProps {
+  workspaceId: string;
+}
+
+export const DeleteWorkspaceCard = ({
+  workspaceId,
+}: DeleteWorkspaceCardProps) => {
+  const queryClient = useQueryClient();
   const { open, onOpenDialog, onCloseDialog } = useConfirmDialog();
 
-  const isPending = false;
+  const { mutate, isPending } = useMutation({
+    mutationFn: deleteWorkspaceMutationFn,
+    onSuccess: ({ message }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["workspace", workspaceId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["auth-user"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user-workspaces"],
+      });
 
-  const handleConfirm = () => {};
+      window.toast({
+        title: "Success",
+        description: message,
+        variant: "success",
+      });
+
+      onCloseDialog();
+    },
+    onError: (err) => {
+      console.error(err);
+      window.toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleConfirm = () => {
+    if (isPending) return;
+    mutate(workspaceId);
+  };
   return (
     <>
       <div className="w-full">
@@ -28,12 +71,25 @@ export const DeleteWorkspaceCard = () => {
               Please proceed with caution and ensure this action is intentional.
             </p>
           </div>
-          <Button
-            className="shrink-0 flex place-self-end h-[40px]"
-            variant="destructive"
-            onClick={onOpenDialog}>
-            Delete Workspace
-          </Button>
+          <PermissionsGuard
+            requiredPermission={Permissions.DELETE_WORKSPACE}
+            callback={
+              <Button
+                disabled
+                className="shrink-0 flex place-self-end h-[40px]"
+                variant="destructive"
+                title="you don't have permission to delete">
+                Delete Workspace
+              </Button>
+            }>
+            <Button
+              disabled={isPending}
+              className="shrink-0 flex place-self-end h-[40px]"
+              variant="destructive"
+              onClick={onOpenDialog}>
+              Delete Workspace
+            </Button>
+          </PermissionsGuard>
         </div>
       </div>
 
@@ -42,7 +98,7 @@ export const DeleteWorkspaceCard = () => {
         isLoading={isPending}
         onClose={onCloseDialog}
         onConfirm={handleConfirm}
-        title={`Delete  Test co Workspace`}
+        title={`Delete Test co Workspace`}
         description={`Are you sure you want to delete? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"

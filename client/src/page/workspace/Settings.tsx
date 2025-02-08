@@ -2,8 +2,17 @@ import { Separator } from "@/components/ui/separator";
 import { WorkspaceHeader } from "@/components/workspace/common/workspace-header";
 import { EditWorkspaceForm } from "@/components/workspace/edit-workspace-form";
 import { DeleteWorkspaceCard } from "@/components/workspace/settings/delete-workspace-card";
+import { useGetWorkspaceQuery } from "@/hooks/api/use-get-workspace";
+import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
 export const Settings = () => {
+  const workspaceId = useWorkspaceId();
+
+  const { data, isError, isPending } = useGetWorkspaceQuery(workspaceId);
+
+  if (isPending) return <div>Loading...</div>;
+  if (isError) return <div>Error</div>;
+
   return (
     <div className="w-full h-auto py-2">
       <WorkspaceHeader />
@@ -16,10 +25,10 @@ export const Settings = () => {
 
           <div className="flex flex-col pt-0.5 px-0 ">
             <div className="pt-2">
-              <EditWorkspaceForm />
+              <EditWorkspaceForm workspace={data.workspace} />
             </div>
             <div className="pt-2">
-              <DeleteWorkspaceCard />
+              <DeleteWorkspaceCard workspaceId={data.workspace.id} />
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { EditProjectDialog } from "./edit-project-dialog";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getProjectByIdQueryFn } from "@/api/api";
-import { PermissionsGuard } from "@/components/resuable/permission-guard";
+import { PermissionsGuard } from "@/components/reusable/permission-guard";
 import { Permissions } from "@/constant";
 import { Edit3 } from "lucide-react";
 import { useEditProjectDialog } from "@/hooks/use-edit-project-dialog";
