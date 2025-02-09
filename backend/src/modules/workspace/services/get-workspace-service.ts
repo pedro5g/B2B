@@ -1,6 +1,10 @@
 import { IMemberRepository } from '@/modules/member/domain/repository/i-member-repository';
 import { IWorkspaceRepository } from '../domain/repository/i-workspace-repository';
 import { NotFoundException } from '@/shared/exceptions';
+import {
+  GetWorkspaceServiceDTO,
+  GetWorkspaceServiceReturnDTO,
+} from './dtos/get-workspace-service-dto';
 
 export class GetWorkspaceService {
   constructor(
@@ -8,7 +12,9 @@ export class GetWorkspaceService {
     private readonly memberRepository: IMemberRepository,
   ) {}
 
-  async execute(workspaceId: string) {
+  async execute({
+    workspaceId,
+  }: GetWorkspaceServiceDTO): Promise<GetWorkspaceServiceReturnDTO> {
     const workspace = await this.workspaceRepository.findById(workspaceId);
 
     if (!workspace) {
@@ -19,6 +25,15 @@ export class GetWorkspaceService {
       workspaceId,
     );
 
-    return { workspace: { workspace, members } };
+    return {
+      workspace: {
+        id: workspace.id,
+        name: workspace.name,
+        description: workspace.description,
+        inviteCode: workspace.inviteCode,
+        ownerId: workspace.ownerId,
+        members: members,
+      },
+    };
   }
 }

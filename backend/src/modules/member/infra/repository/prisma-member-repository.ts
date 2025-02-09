@@ -4,7 +4,7 @@ import { IMember, IMemberWithRole } from '../../domain/models/i-member';
 import { IMemberRepository } from '../../domain/repository/i-member-repository';
 import { FindMemberDTO } from '../../domain/dtos/find-member-dto';
 import { UpdateMemberDTO } from '../../domain/dtos/update-member-dto';
-import { IUserWithRole } from '@/modules/user/domain/models/i-user-wtih-roles';
+import { IUserWithRole } from '@/modules/user/domain/models/i-user-with-roles';
 
 export class PrismaMemberRepository implements IMemberRepository {
   async create({

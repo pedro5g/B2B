@@ -2,7 +2,7 @@ import { CreateUserDTO } from '../dtos/create-user-dto';
 import { UpdateUserDTO } from '../dtos/update-user-dto';
 import { IUser } from '../models/i-user';
 import { IUserPresenter } from '../models/i-user-presenter';
-import { IUserWithRole } from '../models/i-user-wtih-roles';
+import { IUserWithRole } from '../models/i-user-with-roles';
 
 export interface IUserRepository {
   create(createArgs: CreateUserDTO): Promise<{ userId: string }>;

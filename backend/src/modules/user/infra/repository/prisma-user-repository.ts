@@ -3,7 +3,7 @@ import { CreateUserDTO } from '../../domain/dtos/create-user-dto';
 import { IUserRepository } from '../../domain/repository/i-user-repository';
 import { IUser } from '../../domain/models/i-user';
 import { UpdateUserDTO } from '../../domain/dtos/update-user-dto';
-import { IUserWithRole } from '../../domain/models/i-user-wtih-roles';
+import { IUserWithRole } from '../../domain/models/i-user-with-roles';
 import { IUserPresenter } from '../../domain/models/i-user-presenter';
 
 export class PrismaUserRepository implements IUserRepository {

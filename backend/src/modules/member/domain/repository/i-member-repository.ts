@@ -1,4 +1,4 @@
-import { IUserWithRole } from '@/modules/user/domain/models/i-user-wtih-roles';
+import { IUserWithRole } from '@/modules/user/domain/models/i-user-with-roles';
 import { CreateMemberDTO } from '../dtos/create-member-dto';
 import { FindMemberDTO } from '../dtos/find-member-dto';
 import { UpdateMemberDTO } from '../dtos/update-member-dto';

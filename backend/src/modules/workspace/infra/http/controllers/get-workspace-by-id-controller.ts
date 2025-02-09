@@ -17,9 +17,9 @@ export class GetWorkspaceByIdController {
     // this line checks whether user is a member in this workspace
     await this.getMemberRoleInWorkspaceService.execute({ workspaceId, userId });
 
-    const { workspace } = await this.getWorkspaceByIdService.execute(
+    const { workspace } = await this.getWorkspaceByIdService.execute({
       workspaceId,
-    );
+    });
 
     res
       .status(HTTP_STATUS.OK)
