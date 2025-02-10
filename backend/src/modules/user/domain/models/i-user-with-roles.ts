@@ -1,4 +1,5 @@
 export interface IUserWithRole {
+  workspaceId: string;
   user: {
     id: string;
     name: string;
@@ -9,4 +10,5 @@ export interface IUserWithRole {
     id: string;
     name: string;
   };
+  joinAt: Date | string;
 }

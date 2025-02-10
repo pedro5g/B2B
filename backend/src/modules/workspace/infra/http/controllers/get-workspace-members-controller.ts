@@ -23,9 +23,9 @@ export class GetWorkspaceMembersController {
 
     roleGuard(role, [Permissions.VIEW_ONLY]);
 
-    const { members, roles } = await this.getWorkspaceMembersService.execute(
+    const { members, roles } = await this.getWorkspaceMembersService.execute({
       workspaceId,
-    );
+    });
 
     res.status(HTTP_STATUS.OK).json({
       message: 'Workspace members retrieved successfully',

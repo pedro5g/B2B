@@ -1,5 +1,9 @@
 import { IMemberRepository } from '@/modules/member/domain/repository/i-member-repository';
 import { IRoleRepository } from '@/modules/role/domain/repository/i-role-repository';
+import {
+  GetWorkspaceMembersServiceDTO,
+  GetWorkspaceMembersServiceReturnDTO,
+} from './dtos/get-workspace-members-dto';
 
 export class GetWorkspaceMembersService {
   constructor(
@@ -7,23 +11,18 @@ export class GetWorkspaceMembersService {
     private readonly roleRepository: IRoleRepository,
   ) {}
 
-  async execute(workspaceId: string) {
+  async execute({
+    workspaceId,
+  }: GetWorkspaceMembersServiceDTO): Promise<GetWorkspaceMembersServiceReturnDTO> {
     const members = await this.memberRepository.getUsersWithRoleById(
       workspaceId,
     );
-
-    const usersFormatted = members.map((member) => {
-      const { user, role } = member;
-
-      return { ...user, role: { name: role.name } };
-    });
-
     const roles = await this.roleRepository.findAll();
 
     const rolesWithoutPermissions = roles.map(({ permissions, ...rest }) => ({
       ...rest,
     }));
 
-    return { members: usersFormatted, roles: rolesWithoutPermissions };
+    return { members, roles: rolesWithoutPermissions };
   }
 }

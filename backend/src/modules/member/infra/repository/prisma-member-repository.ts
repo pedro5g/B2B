@@ -5,6 +5,7 @@ import { IMemberRepository } from '../../domain/repository/i-member-repository';
 import { FindMemberDTO } from '../../domain/dtos/find-member-dto';
 import { UpdateMemberDTO } from '../../domain/dtos/update-member-dto';
 import { IUserWithRole } from '@/modules/user/domain/models/i-user-with-roles';
+import { string } from 'zod';
 
 export class PrismaMemberRepository implements IMemberRepository {
   async create({
@@ -101,6 +102,8 @@ export class PrismaMemberRepository implements IMemberRepository {
             name: true,
           },
         },
+        workspaceId: true,
+        joinAt: true,
       },
     });
 
