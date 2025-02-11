@@ -147,6 +147,7 @@ export const DataTableFilterToolbar = ({
                 {initials}
               </AvatarFallback>
             </Avatar>
+            <p>{name}</p>
           </div>
         ),
         value: member.user.id,
@@ -181,54 +182,55 @@ export const DataTableFilterToolbar = ({
         }}
         className="h-8 w-full lg:w-[250px]"
       />
-      {/* Status filter */}
-      <DataTableFacetedFilter
-        title="Status"
-        multiSelect={true}
-        options={statuses}
-        disabled={isLoading}
-        selectedValues={filters.status || []}
-        onFilterChange={(values) => handleFilterChange("status", values)}
-      />
-
-      {/* Priority filter */}
-      <DataTableFacetedFilter
-        title="Priority"
-        multiSelect={true}
-        options={priorities}
-        disabled={isLoading}
-        selectedValues={filters.priority || []}
-        onFilterChange={(values) => handleFilterChange("priority", values)}
-      />
-
-      {/* Assigned To filter */}
-      <DataTableFacetedFilter
-        title="Assigned To"
-        multiSelect={true}
-        options={assigneesOptions}
-        disabled={isLoading}
-        selectedValues={filters.assigneeId || []}
-        onFilterChange={(values) => handleFilterChange("assigneeId", values)}
-      />
-
-      {!projectId && (
+      <div className=" flex w-auto max-lg:w-full max-lg:grid max-lg:grid-cols-2 grid-rows-1 max-lg:grid-rows-1 gap-2">
+        {/* Status filter */}
         <DataTableFacetedFilter
-          title="Projects"
-          multiSelect={false}
-          options={projectOptions}
+          title="Status"
+          multiSelect={true}
+          options={statuses}
           disabled={isLoading}
-          selectedValues={filters.projectId?.split(",") || []}
-          onFilterChange={(values) => handleFilterChange("projectId", values)}
+          selectedValues={filters.status || []}
+          onFilterChange={(values) => handleFilterChange("status", values)}
         />
-      )}
 
+        {/* Priority filter */}
+        <DataTableFacetedFilter
+          title="Priority"
+          multiSelect={true}
+          options={priorities}
+          disabled={isLoading}
+          selectedValues={filters.priority || []}
+          onFilterChange={(values) => handleFilterChange("priority", values)}
+        />
+
+        {/* Assigned To filter */}
+        <DataTableFacetedFilter
+          title="Assigned To"
+          multiSelect={true}
+          options={assigneesOptions}
+          disabled={isLoading}
+          selectedValues={filters.assigneeId || []}
+          onFilterChange={(values) => handleFilterChange("assigneeId", values)}
+        />
+
+        {!projectId && (
+          <DataTableFacetedFilter
+            title="Projects"
+            multiSelect={false}
+            options={projectOptions}
+            disabled={isLoading}
+            selectedValues={filters.projectId?.split(",") || []}
+            onFilterChange={(values) => handleFilterChange("projectId", values)}
+          />
+        )}
+      </div>
       {Object.values(filters).some(
         (value) => value !== null && value !== ""
       ) && (
         <Button
           disabled={isLoading}
-          variant="ghost"
-          className="h-8 px-2 lg:px-3"
+          variant="outline"
+          className="h-8 px-2 lg:px-3 max-lg:w-full"
           onClick={() =>
             setFilters({
               keyword: null,

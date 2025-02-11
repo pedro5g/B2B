@@ -30,8 +30,9 @@ interface DataTableFacetedFilterProps {
   }[];
   disabled?: boolean;
   multiSelect?: boolean;
-  selectedValues: string[]; // New prop
-  onFilterChange: (values: string[]) => void; // New callback prop
+  selectedValues: string[];
+  onFilterChange: (values: string[]) => void;
+  className?: string;
 }
 
 export function DataTableFacetedFilter({
@@ -41,6 +42,7 @@ export function DataTableFacetedFilter({
   disabled,
   multiSelect = true,
   onFilterChange,
+  className,
 }: DataTableFacetedFilterProps) {
   const selectedValueSet = new Set(selectedValues);
 
@@ -57,8 +59,10 @@ export function DataTableFacetedFilter({
           disabled={disabled}
           variant="outline"
           size="sm"
-          className="h-8 border-dashed w-full lg:w-auto"
-        >
+          className={cn(
+            "h-8 border-dashed w-full lg:w-auto max-lg:justify-start",
+            className
+          )}>
           <PlusCircle />
           {title}
           {selectedValueSet.size > 0 && (
@@ -66,16 +70,14 @@ export function DataTableFacetedFilter({
               <Separator orientation="vertical" className="mx-0 h-4" />
               <Badge
                 variant="secondary"
-                className="rounded-sm px-1 font-normal lg:hidden"
-              >
+                className="rounded-sm px-1 font-normal lg:hidden">
                 {selectedValueSet.size}
               </Badge>
               <div className="hidden space-x-1 lg:flex">
                 {selectedValueSet.size > 1 ? (
                   <Badge
                     variant="secondary"
-                    className="rounded-sm px-1 font-normal"
-                  >
+                    className="rounded-sm px-1 font-normal">
                     {selectedValueSet.size}
                   </Badge>
                 ) : (
@@ -85,8 +87,7 @@ export function DataTableFacetedFilter({
                       <Badge
                         variant="secondary"
                         key={option.value}
-                        className="rounded-sm px-1 font-normal"
-                      >
+                        className="rounded-sm px-1 font-normal">
                         {option.label}
                       </Badge>
                     ))
@@ -118,8 +119,7 @@ export function DataTableFacetedFilter({
                         onFilterChange(isSelected ? [] : [option.value]); // Single select
                         onClose();
                       }
-                    }}
-                  >
+                    }}>
                     {multiSelect && (
                       <div
                         className={cn(
@@ -127,8 +127,7 @@ export function DataTableFacetedFilter({
                           isSelected
                             ? "bg-primary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible"
-                        )}
-                      >
+                        )}>
                         <Check />
                       </div>
                     )}
@@ -146,8 +145,7 @@ export function DataTableFacetedFilter({
                 <CommandGroup className="sticky bottom-0 align-bottom bg-white">
                   <CommandItem
                     onSelect={() => onFilterChange([])} // Clear all filters
-                    className="justify-center text-center"
-                  >
+                    className="justify-center text-center">
                     Clear filters
                   </CommandItem>
                 </CommandGroup>
