@@ -1,7 +1,4 @@
 import { Column, ColumnDef, Row } from "@tanstack/react-table";
-import { format } from "date-fns";
-
-import { DataTableColumnHeader } from "./table-column-header";
 import { DataTableRowActions } from "./table-row-actions";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +9,7 @@ import {
   TaskStatusEnumType,
 } from "@/constant";
 import {
+  formatDate,
   formatStatusToEnum,
   getAvatarColor,
   getAvatarFallbackText,
@@ -19,6 +17,7 @@ import {
 import { priorities, statuses } from "./data";
 import { TaskType } from "@/api/types/api-type";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DataTableColumnHeader } from "./table-column-header";
 
 export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
   const columns: ColumnDef<TaskType>[] = [
@@ -127,7 +126,7 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
       cell: ({ row }) => {
         return (
           <span className="lg:max-w-[100px] text-sm">
-            {row.original.dueDate ? format(row.original.dueDate, "PPP") : null}
+            {row.original.dueDate ? formatDate(row.original.dueDate) : null}
           </span>
         );
       },

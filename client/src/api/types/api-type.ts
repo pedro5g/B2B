@@ -126,7 +126,7 @@ export type WorkspaceWithMembersType = WorkspaceType & {
       name: string;
       permissions: PermissionType[];
     };
-    joinedAt: string;
+    joinAt: string;
   }[];
 };
 
@@ -150,16 +150,15 @@ export type AllMembersInWorkspaceResponseType = {
     user: {
       id: string;
       name: string;
-      email: string;
-      profilePicture: string | null;
+      email: string | null;
+      profilePictureUrl: string | null;
     };
     workspaceId: string;
     role: {
       id: string;
       name: string;
     };
-    joinedAt: string;
-    createdAt: string;
+    joinAt: string | Date;
   }[];
   roles: RoleType[];
 };
@@ -196,7 +195,7 @@ export type ProjectType = {
   createdBy: {
     id: string;
     name: string;
-    profilePicture: string;
+    profilePictureUrl: string;
   };
   createdAt: string;
   updatedAt: string;
@@ -254,7 +253,7 @@ export type CreateTaskPayloadType = {
     priority: TaskPriorityEnumType;
     status: TaskStatusEnumType;
     assignedTo: string;
-    dueDate: string;
+    dueDate: string | Date;
   };
 };
 
@@ -272,7 +271,7 @@ export type TaskType = {
   assignedTo: {
     id: string;
     name: string;
-    profilePicture: string | null;
+    profilePictureUrl: string | null;
   } | null;
   createdBy?: string;
   dueDate: string;
@@ -284,10 +283,10 @@ export type TaskType = {
 export type AllTaskPayloadType = {
   workspaceId: string;
   projectId?: string | null;
-  keyword?: string[];
-  priority?: TaskPriorityEnumType[];
-  status?: TaskStatusEnumType[];
-  assignedTo?: string[];
+  keyword?: string[] | null;
+  priority?: TaskPriorityEnumType[] | null;
+  status?: TaskStatusEnumType[] | null;
+  assignedTo?: string[] | null;
   dueDate?: string | null;
   pageNumber?: number | null;
   pageSize?: number | null;

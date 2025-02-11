@@ -4,18 +4,23 @@ import {
   TaskStatusEnum,
   TaskStatusEnumType,
 } from "@/constant";
-import { parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
+import {
+  parseAsString,
+  parseAsStringEnum,
+  useQueryStates,
+  parseAsArrayOf,
+} from "nuqs";
 
 export const useTaskTableFilter = () => {
   return useQueryStates({
-    status: parseAsStringEnum<TaskStatusEnumType>(
-      Object.values(TaskStatusEnum)
+    status: parseAsArrayOf<TaskStatusEnumType>(
+      parseAsStringEnum(Object.values(TaskStatusEnum))
     ),
-    priority: parseAsStringEnum<TaskPriorityEnumType>(
-      Object.values(TaskPriorityEnum)
+    priority: parseAsArrayOf<TaskPriorityEnumType>(
+      parseAsStringEnum(Object.values(TaskPriorityEnum))
     ),
-    keyword: parseAsString,
+    keyword: parseAsArrayOf(parseAsString),
     projectId: parseAsString,
-    assigneeId: parseAsString,
+    assigneeId: parseAsArrayOf(parseAsString),
   });
 };

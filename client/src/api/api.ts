@@ -167,7 +167,7 @@ export const createTaskMutationFn = async ({
   projectId,
   data,
 }: CreateTaskPayloadType) => {
-  return await API.POST(
+  return await API.POST<{ message: string }>(
     `/task/project/${projectId}/workspace/${workspaceId}/create`,
     data
   );

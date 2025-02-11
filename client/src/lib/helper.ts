@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 //THE UPDATED ONE BECAUSE OF THE FILTERS ->  Take Note ->
 export const transformOptions = (
   options: string[],
@@ -20,6 +22,10 @@ export const formatStatusToEnum = (status: string): string => {
   return status.toUpperCase().replace(/\s+/g, "_");
 };
 
+/**
+ * @param initials - string containing the name initials (e.g., "AB"
+ * @returns returns a tailwind color classes that match with initials
+ */
 export const getAvatarColor = (initials: string): string => {
   const colors = [
     "bg-red-500 text-white",
@@ -49,4 +55,11 @@ export const getAvatarFallbackText = (name: string) => {
     .join("")
     .slice(0, 2); // Ensure only two initials
   return initials || "NA";
+};
+
+export const formatDate = (
+  value: string | Date,
+  formatStr: string = "PPP"
+): string => {
+  return format(value, formatStr);
 };

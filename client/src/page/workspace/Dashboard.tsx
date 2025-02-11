@@ -6,6 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RecentProjects } from "@/components/workspace/project/recent-projects";
 import { RecentTasks } from "@/components/workspace/task/recent-tasks";
 import { RecentMembers } from "@/components/workspace/member/recent-members";
+import { PermissionsGuard } from "@/components/reusable/permission-guard";
+import { Permissions } from "@/constant";
+import { FallbackTooltip } from "@/components/fallback-tooltip";
 
 export const WorkspaceDashboard = () => {
   const { onOpen } = useCreateProjectDialog();
@@ -20,10 +23,21 @@ export const WorkspaceDashboard = () => {
             Here&apos;s an overview for this workspace!
           </p>
         </div>
-        <Button onClick={onOpen}>
-          <Plus />
-          New Project
-        </Button>
+        <PermissionsGuard
+          callback={
+            <FallbackTooltip textHelper="You don't have permission to create a project">
+              <Button disabled>
+                <Plus />
+                New Project
+              </Button>
+            </FallbackTooltip>
+          }
+          requiredPermission={Permissions.CREATE_PROJECT}>
+          <Button onClick={onOpen}>
+            <Plus />
+            New Project
+          </Button>
+        </PermissionsGuard>
       </div>
       <WorkspaceAnalytics />
       <div className="mt-4">

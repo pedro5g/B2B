@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 import { useGetProjectsInWorkspaceQuery } from "@/hooks/api/use-get-projects";
-import { getAvatarColor, getAvatarFallbackText } from "@/lib/helper";
-import { format } from "date-fns";
+import {
+  formatDate,
+  getAvatarColor,
+  getAvatarFallbackText,
+} from "@/lib/helper";
 import { Loader } from "lucide-react";
 
 export const RecentProjects = () => {
@@ -19,14 +22,14 @@ export const RecentProjects = () => {
 
   return (
     <div className="flex flex-col pt-2">
-      {isPending ? (
+      {isPending && (
         <Loader
           className="w-8 h-8
          animate-spin
          place-self-center
          flex"
         />
-      ) : null}
+      )}
       {projects?.length === 0 && (
         <div
           className="font-semibold
@@ -59,16 +62,14 @@ export const RecentProjects = () => {
                       {project.name}
                     </p>
                     <p className="text-sm text-muted-foreground">
-                      {project.createdAt
-                        ? format(project.createdAt, "PPP")
-                        : null}
+                      {formatDate(project.createdAt)}
                     </p>
                   </div>
                   <div className="ml-auto flex items-center gap-4">
                     <span className="text-sm text-gray-500">Created by</span>
                     <Avatar className="hidden h-9 w-9 sm:flex">
                       <AvatarImage
-                        src={project.createdBy.profilePicture || ""}
+                        src={project.createdBy.profilePictureUrl || ""}
                         alt="Avatar"
                       />
                       <AvatarFallback className={avatarColor}>
