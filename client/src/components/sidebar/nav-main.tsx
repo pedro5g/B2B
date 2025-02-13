@@ -8,7 +8,7 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import {
-  SidebarGroup,
+  SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -53,7 +53,7 @@ export function NavMain() {
   const pathname = location.pathname;
 
   return (
-    <SidebarGroup>
+    <SidebarGroupContent>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
@@ -66,6 +66,6 @@ export function NavMain() {
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
-    </SidebarGroup>
+    </SidebarGroupContent>
   );
 }

@@ -17,7 +17,9 @@ export const FallbackTooltip = ({
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger>{children}</TooltipTrigger>
+        <TooltipTrigger asChild>
+          <div>{children}</div>
+        </TooltipTrigger>
         <TooltipContent>
           <p>{textHelper}</p>
         </TooltipContent>

@@ -13,6 +13,7 @@ import {
   CreateWorkspaceType,
   CurrentUserResponseType,
   EditProjectPayloadType,
+  EditTaskPayloadType,
   EditWorkspaceType,
   LoginResponseType,
   LoginType,
@@ -199,6 +200,18 @@ export const getAllTasksQueryFn = async ({
   const url = queryString.toString() ? `${baseUrl}?${queryString}` : baseUrl;
 
   return await API.GET<AllTaskResponseType>(url);
+};
+
+export const editTaskMutationFn = async ({
+  taskId,
+  projectId,
+  workspaceId,
+  data,
+}: EditTaskPayloadType) => {
+  return await API.PUT<{ message: string }>(
+    `task/${taskId}/project/${projectId}/workspace/${workspaceId}/update`,
+    data
+  );
 };
 
 export const deleteTaskMutationFn = async ({

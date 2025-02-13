@@ -2,10 +2,12 @@ import { Separator } from "@/components/ui/separator";
 import { WorkspaceHeader } from "@/components/workspace/common/workspace-header";
 import { EditWorkspaceForm } from "@/components/workspace/edit-workspace-form";
 import { DeleteWorkspaceCard } from "@/components/workspace/settings/delete-workspace-card";
+import { Permissions } from "@/constant";
+import { withPermission } from "@/hoc/with-permission";
 import { useGetWorkspaceQuery } from "@/hooks/api/use-get-workspace";
 import { useWorkspaceId } from "@/hooks/use-workspace-id";
 
-export const Settings = () => {
+export const Settings = withPermission(() => {
   const workspaceId = useWorkspaceId();
 
   const { data, isError, isPending } = useGetWorkspaceQuery(workspaceId);
@@ -35,4 +37,4 @@ export const Settings = () => {
       </main>
     </div>
   );
-};
+}, Permissions.EDIT_WORKSPACE);

@@ -22,7 +22,7 @@ import { DataTableColumnHeader } from "./table-column-header";
 export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
   const columns: ColumnDef<TaskType>[] = [
     {
-      id: "_id",
+      id: "id",
       header: ({ table }) => (
         <Checkbox
           checked={
@@ -105,7 +105,10 @@ export const getColumns = (projectId?: string): ColumnDef<TaskType>[] => {
           name && (
             <div className="flex items-center gap-1">
               <Avatar className="h-6 w-6">
-                <AvatarImage src={assignee?.profilePicture || ""} alt={name} />
+                <AvatarImage
+                  src={assignee?.profilePictureUrl || ""}
+                  alt={name}
+                />
                 <AvatarFallback className={avatarColor}>
                   {initials}
                 </AvatarFallback>

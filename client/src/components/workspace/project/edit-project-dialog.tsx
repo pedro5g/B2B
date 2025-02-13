@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { EditProjectForm } from "./edit-project-form";
 import { ProjectType } from "@/api/types/api-type";
 import { useEditProjectDialog } from "@/hooks/use-edit-project-dialog";
@@ -13,7 +13,10 @@ export const EditProjectDialog = ({ project }: EditProjectDialogProps) => {
   return (
     <div>
       <Dialog modal={true} open={open} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg border-0 rounded-md">
+        <DialogTitle hidden>Edit project form</DialogTitle>
+        <DialogContent
+          aria-describedby={undefined}
+          className="sm:max-w-lg border-0 rounded-md">
           <EditProjectForm project={project} onClose={onClose} />
         </DialogContent>
       </Dialog>

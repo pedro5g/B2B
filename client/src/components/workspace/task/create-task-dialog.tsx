@@ -1,5 +1,10 @@
 import { Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { CreateTaskForm } from "./create-task-form";
 import { useState } from "react";
@@ -20,17 +25,20 @@ export const CreateTaskDialog = ({ projectId }: CreateTaskDialogProps) => {
   return (
     <div>
       <Dialog modal={true} open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTitle hidden>Create task form</DialogTitle>
         <PermissionsGuard
           requiredPermission={Permissions.CREATE_TASK}
           callback={<></>}>
-          <DialogTrigger>
+          <DialogTrigger asChild>
             <Button>
               <Plus />
               New Task
             </Button>
           </DialogTrigger>{" "}
         </PermissionsGuard>
-        <DialogContent className="sm:max-w-lg max-h-auto my-5 border-0">
+        <DialogContent
+          aria-describedby={undefined}
+          className="sm:max-w-lg max-h-auto my-5 border-0">
           <CreateTaskForm onClose={onClose} projectId={projectId} />
         </DialogContent>
       </Dialog>

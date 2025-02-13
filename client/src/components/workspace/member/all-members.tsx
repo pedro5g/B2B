@@ -68,12 +68,14 @@ export const AllMembers = () => {
       {isPending ? (
         <Loader className="size-8 animate-spin place-self-center flex" />
       ) : (
-        members.map((member) => {
+        members.map((member, i) => {
           const initials = getAvatarFallbackText(member.user.name);
           const fallbackColorSchema = getAvatarColor(initials);
 
           return (
-            <div className="flex items-center justify-between space-x-4">
+            <div
+              key={member.user.id + "_" + i}
+              className="flex items-center justify-between space-x-4">
               <div className="flex items-center space-x-4">
                 <Avatar className="h-8 w-8">
                   <AvatarImage

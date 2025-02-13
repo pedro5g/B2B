@@ -257,15 +257,25 @@ export type CreateTaskPayloadType = {
   };
 };
 
+export type EditTaskPayloadType = {
+  workspaceId: string;
+  projectId: string;
+  taskId: string;
+  data: {
+    title: string;
+    description: string;
+    priority: TaskPriorityEnumType;
+    status: TaskStatusEnumType;
+    assignedTo: string;
+    dueDate: string | Date;
+  };
+};
+
 export type TaskType = {
   id: string;
   title: string;
   description?: string;
-  project?: {
-    id: string;
-    emoji: string;
-    name: string;
-  };
+  projectId: string;
   priority: TaskPriorityEnumType;
   status: TaskStatusEnumType;
   assignedTo: {

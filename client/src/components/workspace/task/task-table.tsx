@@ -109,50 +109,51 @@ export const DataTableFilterToolbar = ({
   const { data } = useGetProjectsInWorkspaceQuery({ workspaceId });
   const { data: memberData } = useGetWorkspaceMembers(workspaceId);
 
-  const projects = useMemo(() => data?.projects || [], [data?.projects]);
-  const members = useMemo(
-    () => memberData?.members || [],
-    [memberData?.members]
-  );
+  const projects = data?.projects;
+  const members = memberData?.members;
 
   const projectOptions = useMemo(() => {
-    return projects?.map((project) => {
-      return {
-        label: (
-          <div className="flex items-center gap-1">
-            <span>{project.emoji}</span>
-            <span>{project.name}</span>
-          </div>
-        ),
-        value: project.id,
-      };
-    });
+    return (
+      projects?.map((project) => {
+        return {
+          label: (
+            <div className="flex items-center gap-1">
+              <span>{project.emoji}</span>
+              <span>{project.name}</span>
+            </div>
+          ),
+          value: project.id,
+        };
+      }) || []
+    );
   }, [projects]);
 
   const assigneesOptions = useMemo(() => {
-    return members?.map((member) => {
-      const name = member.user.name || "Unknown";
-      const initials = getAvatarFallbackText(name);
-      const fallbackColorSchema = getAvatarColor(initials);
+    return (
+      members?.map((member) => {
+        const name = member.user.name || "Unknown";
+        const initials = getAvatarFallbackText(name);
+        const fallbackColorSchema = getAvatarColor(initials);
 
-      return {
-        label: (
-          <div className="flex items-center space-x-2">
-            <Avatar className="size-7">
-              <AvatarImage
-                src={member.user.profilePictureUrl || ""}
-                alt={name}
-              />
-              <AvatarFallback className={fallbackColorSchema}>
-                {initials}
-              </AvatarFallback>
-            </Avatar>
-            <p>{name}</p>
-          </div>
-        ),
-        value: member.user.id,
-      };
-    });
+        return {
+          label: (
+            <div className="flex items-center space-x-2">
+              <Avatar className="size-7">
+                <AvatarImage
+                  src={member.user.profilePictureUrl || ""}
+                  alt={name}
+                />
+                <AvatarFallback className={fallbackColorSchema}>
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <p>{name}</p>
+            </div>
+          ),
+          value: member.user.id,
+        };
+      }) || []
+    );
   }, [members]);
 
   const handleFilterChange = (key: keyof Filters, values: string[]) => {
