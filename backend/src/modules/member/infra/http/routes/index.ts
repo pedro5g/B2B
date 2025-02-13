@@ -1,7 +1,8 @@
-import { Router } from 'express';
+import { mockPatchingRouter } from '@/http/route';
 import { joinWorkspaceController } from '../factory';
+import { Router } from 'express';
 
-const memberRoutes = Router();
+const memberRoutes = mockPatchingRouter(Router());
 
 memberRoutes.post(
   '/workspace/:inviteCode/join',

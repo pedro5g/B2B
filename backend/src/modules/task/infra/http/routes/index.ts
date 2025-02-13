@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { mockPatchingRouter } from '@/http/route';
 import {
   createTaskController,
   deleteTaskController,
@@ -6,8 +6,9 @@ import {
   getTaskByIdController,
   updateTaskController,
 } from '../factory';
+import { Router } from 'express';
 
-const taskRoutes = Router();
+const taskRoutes = mockPatchingRouter(Router());
 
 taskRoutes.post(
   '/project/:projectId/workspace/:workspaceId/create',

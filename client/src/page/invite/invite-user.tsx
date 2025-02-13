@@ -28,6 +28,7 @@ export const InviteUser = () => {
     mutationFn: invitedUserJoinWorkspaceMutationFn,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["user-workspaces"] });
+      queryClient.invalidateQueries({ queryKey: ["auth-user"] });
       window.toast({
         title: "Success",
         description: data.message,

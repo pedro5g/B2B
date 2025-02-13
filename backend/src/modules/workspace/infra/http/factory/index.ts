@@ -4,6 +4,7 @@ import {
   createWorkspaceService,
   deleteWorkspaceService,
   getAllWorkspacesUserIsMemberService,
+  getWorkspaceAnalyticsService,
   getWorkspaceMembersService,
   getWorkspaceService,
   updateWorkspaceService,
@@ -15,6 +16,7 @@ import { ChangeWorkspaceMemberRoleController } from '../controllers/change-works
 import { GetAllWorkspacesUserIsMemberController } from '../controllers/get-all-workspaces-user-is-member-controller';
 import { GetWorkspaceByIdController } from '../controllers/get-workspace-by-id-controller';
 import { GetWorkspaceMembersController } from '../controllers/get-workspace-members-controller';
+import { GetWorkspaceAnalyticsController } from '../controllers/get-workspace-analytics-controller';
 
 const createWorkspaceController = new CreateWorkspaceController(
   createWorkspaceService,
@@ -45,6 +47,11 @@ const getWorkspaceMembersController = new GetWorkspaceMembersController(
   getMemberRoleInWorkspaceService,
 );
 
+const getWorkspaceAnalyticsController = new GetWorkspaceAnalyticsController(
+  getWorkspaceAnalyticsService,
+  getMemberRoleInWorkspaceService,
+);
+
 export {
   createWorkspaceController,
   updateWorkspaceController,
@@ -53,4 +60,5 @@ export {
   getAllWorkspaceUserIsMemberController,
   getWorkspaceByIdController,
   getWorkspaceMembersController,
+  getWorkspaceAnalyticsController,
 };

@@ -7,6 +7,8 @@ import { Roles } from '@/shared/enums/roles';
 import { UpdateWorkspaceDTO } from '../../domain/dtos/update-workspace-dto';
 import { DeleteWorkspaceDTO } from '../../domain/dtos/delete-workspace-dto';
 import { IMember } from '@/modules/member/domain/models/i-member';
+import { WorkspaceAnalyticsDTO } from '../../domain/dtos/workspace-analytics-dto';
+import { TaskStatusEnum } from '@/shared/enums/task';
 
 export class PrismaWorkspaceRepository implements IWorkspaceRepository {
   async create({
@@ -37,7 +39,7 @@ export class PrismaWorkspaceRepository implements IWorkspaceRepository {
       await trx.member.create({
         data: {
           userId: ownerId,
-          roleId: ownerRole?.id,
+          roleId: ownerRole.id,
           workspaceId: workspace.id,
         },
       });
@@ -66,8 +68,8 @@ export class PrismaWorkspaceRepository implements IWorkspaceRepository {
 
   async delete({ userId, workspaceId }: DeleteWorkspaceDTO): Promise<void> {
     await prisma.$transaction(async (trx) => {
-      await trx.project.deleteMany({ where: { workspaceId } });
       await trx.task.deleteMany({ where: { workspaceId } });
+      await trx.project.deleteMany({ where: { workspaceId } });
       await trx.member.deleteMany({ where: { workspaceId } });
       await trx.workspace.delete({
         where: { id: workspaceId, AND: { ownerId: userId } },
@@ -75,16 +77,34 @@ export class PrismaWorkspaceRepository implements IWorkspaceRepository {
     });
   }
 
-  async findWorkspacesByUserId(userId: string): Promise<IWorkspace[]> {
-    const workspaces = await prisma.workspace.findMany({
-      where: {
-        Member: {
-          every: {
-            userId,
-          },
+  async getWorkspaceAnalytics(
+    workspaceId: string,
+  ): Promise<WorkspaceAnalyticsDTO> {
+    const now = new Date();
+
+    const [totalTasks, overdueTasks, completedTasks] = await Promise.all([
+      prisma.task.count({ where: { workspaceId } }),
+      prisma.task.count({
+        where: {
+          workspaceId,
+          status: { not: TaskStatusEnum.DONE },
+          dueDate: { lt: now },
         },
-      },
-    });
+      }),
+      prisma.task.count({
+        where: { workspaceId, status: TaskStatusEnum.DONE },
+      }),
+    ]);
+
+    return { totalTasks, overdueTasks, completedTasks };
+  }
+
+  async findWorkspacesByUserId(userId: string): Promise<IWorkspace[]> {
+    const workspaces = await prisma.$queryRaw<IWorkspace[]>`
+      SELECT * FROM "workspaces" AS w
+      INNER JOIN "members" AS m ON w.id = m."workspace_id"
+      WHERE m."user_id" = ${userId}
+    `;
 
     return workspaces;
   }

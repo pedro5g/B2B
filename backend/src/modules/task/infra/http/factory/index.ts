@@ -1,6 +1,7 @@
 import { getMemberRoleInWorkspaceService } from '@/modules/member/infra/factory';
 import {
   createTaskService,
+  deleteTaskService,
   getAllTasksService,
   getTaskByIdService,
   updateTaskService,
@@ -11,6 +12,7 @@ import { DeleteProjectController } from '@/modules/project/infra/http/controller
 import { deleteProjectService } from '@/modules/project/infra/factory';
 import { GetTaskByIdController } from '../controllers/get-task-by-id-controller';
 import { GetAllTasksController } from '../controllers/get-all-tasks-controller';
+import { DeleteTaskController } from '../controllers/delete-task-controller';
 
 const createTaskController = new CreateTaskController(
   createTaskService,
@@ -20,8 +22,8 @@ const updateTaskController = new UpdateTaskController(
   updateTaskService,
   getMemberRoleInWorkspaceService,
 );
-const deleteTaskController = new DeleteProjectController(
-  deleteProjectService,
+const deleteTaskController = new DeleteTaskController(
+  deleteTaskService,
   getMemberRoleInWorkspaceService,
 );
 const getTaskByIdController = new GetTaskByIdController(

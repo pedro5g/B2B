@@ -83,7 +83,7 @@ export const changeWorkspaceMemberRoleMutationFn = async ({
   workspaceId,
   data,
 }: ChangeWorkspaceMemberRoleType) => {
-  return await API.PUT(`/workspace/change/member/role/${workspaceId}`, data);
+  return await API.PUT(`/workspace/change/member/${workspaceId}`, data);
 };
 
 export const deleteWorkspaceMutationFn = async (workspaceId: string) => {

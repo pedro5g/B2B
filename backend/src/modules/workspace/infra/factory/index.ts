@@ -10,6 +10,7 @@ import { GetWorkspaceWithMembersService } from '../../services/get-workspace-wit
 import { GetWorkspaceService } from '../../services/get-workspace-service';
 import { GetWorkspaceMembersService } from '../../services/get-workspace-members-service';
 import { GetAllWorkspacesUserIsMemberService } from '../../services/get-all-workspaces-user-is-member-service';
+import { GetWorkspaceAnalyticsService } from '../../services/get-workspace-analytics-service';
 
 // repositories
 const workspaceRepository = new PrismaWorkspaceRepository();
@@ -23,6 +24,9 @@ const updateWorkspaceService = new UpdateWorkspaceService(workspaceRepository);
 const deleteWorkspaceService = new DeleteWorkspaceService(
   workspaceRepository,
   userRepository,
+);
+const getWorkspaceAnalyticsService = new GetWorkspaceAnalyticsService(
+  workspaceRepository,
 );
 const changeMemberRoleService = new ChangeMemberRoleService(
   workspaceRepository,
@@ -53,4 +57,5 @@ export {
   getWorkspaceService,
   getWorkspaceMembersService,
   getAllWorkspacesUserIsMemberService,
+  getWorkspaceAnalyticsService,
 };

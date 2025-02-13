@@ -26,7 +26,6 @@ const deleteTaskService = new DeleteTaskService(taskRepository);
 const getTaskByIdService = new GetTaskByIdService(
   taskRepository,
   projectRepository,
-  userRepository,
 );
 const getAllTasksService = new GetAllTasksService(taskRepository);
 

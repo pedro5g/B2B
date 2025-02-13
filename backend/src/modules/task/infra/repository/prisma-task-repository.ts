@@ -108,6 +108,13 @@ export class PrismaTaskRepository implements ITaskRepository {
           createdAt: true,
           updatedAt: true,
           dueDate: true,
+          project: {
+            select: {
+              id: true,
+              name: true,
+              emoji: true,
+            },
+          },
           assignedTo: {
             select: {
               id: true,
@@ -153,6 +160,13 @@ export class PrismaTaskRepository implements ITaskRepository {
         createdAt: true,
         updatedAt: true,
         dueDate: true,
+        project: {
+          select: {
+            id: true,
+            name: true,
+            emoji: true,
+          },
+        },
         assignedTo: {
           select: {
             id: true,

@@ -1,5 +1,5 @@
 import { config } from '@/shared/config';
-import { Router } from 'express';
+import { mockPatchingRouter } from '@/http/route';
 
 import passport from 'passport';
 import {
@@ -8,9 +8,10 @@ import {
   logoutController,
   registerUserController,
 } from '../factory';
+import { Router } from 'express';
 
 const failedURL = `${config.FRONTEND_GOOGLE_CALLBACK_URL}?status=failure`;
-const authRoutes = Router();
+const authRoutes = mockPatchingRouter(Router());
 
 // local authentication with email and password
 authRoutes.post('/register', registerUserController.handle);

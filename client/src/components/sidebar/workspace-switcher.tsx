@@ -40,7 +40,7 @@ export function WorkspaceSwitcher() {
     refetchOnMount: true,
   });
 
-  const workspaces = useMemo(() => data?.workspaces || [], [data]);
+  const workspaces = useMemo(() => data?.workspaces || [], [data?.workspaces]);
 
   useEffect(() => {
     if (workspaceId && workspaces.length) {

@@ -278,6 +278,11 @@ export type TaskType = {
   projectId: string;
   priority: TaskPriorityEnumType;
   status: TaskStatusEnumType;
+  project: {
+    id: string;
+    name: string;
+    emoji: string;
+  };
   assignedTo: {
     id: string;
     name: string;
